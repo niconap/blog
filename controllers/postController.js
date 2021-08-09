@@ -57,3 +57,24 @@ exports.post_create = [
     }
   }
 ]
+
+exports.comment_list = function(req, res, next) {
+  async.parallel({
+    post: function(callback) {
+      Post.findOne({ _id: req.params.id }).populate('comments').exec(callback);
+    }
+  },
+  function(err, results) {
+    if (err) return next(err);
+    if (results.post == null) {
+      var err = new Error("No post found");
+      err.status = 404;
+      return next(err);
+    } else if (results.post.comments.length == 0) {
+      var err = new Error("No comments found under this post");
+      err.status = 404;
+      return next(err);
+    }
+    res.json(results.post.comments);
+  })
+}

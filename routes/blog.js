@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 
 const authorController = require('../controllers/authorController');
-const commentController = require('../controllers/commentController');
 const postController = require('../controllers/postController');
 
 router.get('/', function(req, res, next) {
@@ -16,5 +15,7 @@ router.post('/posts', postController.post_create);
 
 router.get('/authors', authorController.author_list);
 router.post('/authors', authorController.author_create);
+
+router.get('/posts/:id/comments', postController.comment_list);
 
 module.exports = router;
