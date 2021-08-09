@@ -12,7 +12,9 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/posts', postController.post_list);
-
 router.post('/posts', postController.post_create);
+
+router.get('/authors', authorController.author_list);
+router.post('/authors', authorController.author_create);
 
 module.exports = router;
