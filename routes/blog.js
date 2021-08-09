@@ -17,5 +17,6 @@ router.get('/authors', authorController.author_list);
 router.post('/authors', authorController.author_create);
 
 router.get('/posts/:id/comments', postController.comment_list);
+router.post('/posts/:id/comments', postController.comment_create);
 
 module.exports = router;
