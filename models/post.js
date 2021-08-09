@@ -8,9 +8,7 @@ var PostSchema = new Schema({
   content: { type: String, minLength: 3, required: true },
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
   timestamp: { type: Date, required: true },
-  status: {
-    public: { type: Boolean, required: true },
-  }
+  public: { type: Boolean, required: true },
 })
 
 // Create virtual value for the URL
