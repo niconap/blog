@@ -5,6 +5,7 @@ const async = require('async');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 
+// Get all of the posts in an array
 exports.post_list = function(req, res, next) {
   async.parallel({
     posts: function(callback) {
@@ -21,6 +22,7 @@ exports.post_list = function(req, res, next) {
   })
 }
 
+// Create a new post
 exports.post_create = [
   (req, res, next) => {
     jwt.verify(req.token, 'secret', (err, authData) => {
@@ -71,6 +73,7 @@ exports.post_create = [
   }
 ]
 
+// Delete only your own posts
 exports.post_delete = function(req, res, next) {
   jwt.verify(req.token, 'secret', (err, authData) => {
     if (err) {
@@ -106,6 +109,7 @@ exports.post_delete = function(req, res, next) {
   })
 }
 
+// Update only your own posts
 exports.post_update = [
   (req, res, next) => {
     jwt.verify(req.token, 'secret', (err, authData) => {
@@ -157,6 +161,7 @@ exports.post_update = [
   }
 ]
 
+// Display all the comments on a given post
 exports.comment_list = function(req, res, next) {
   async.parallel({
     post: function(callback) {
@@ -178,6 +183,7 @@ exports.comment_list = function(req, res, next) {
   })
 }
 
+// Create a comment on a specific post
 exports.comment_create = [
   (req, res, next) => {
     next();
