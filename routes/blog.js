@@ -13,6 +13,7 @@ router.get('/', function(req, res, next) {
 router.get('/posts', postController.post_list);
 router.post('/posts', verifyToken, postController.post_create);
 router.delete('/posts/:id', verifyToken, postController.post_delete);
+router.put('/posts/:id', verifyToken, postController.post_update);
 
 router.get('/authors', authorController.author_list);
 router.post('/authors', authorController.author_create);

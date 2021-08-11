@@ -25,7 +25,6 @@ exports.post_create = [
   (req, res, next) => {
     jwt.verify(req.token, 'secret', (err, authData) => {
       if (err) {
-        console.log(err, req.token);
         res.sendStatus(403);
       } else {
         req.authData = authData;
@@ -74,6 +73,9 @@ exports.post_create = [
 
 exports.post_delete = function(req, res, next) {
   jwt.verify(req.token, 'secret', (err, authData) => {
+    if (err) {
+      res.sendStatus(403);
+    }
     async.parallel({
       post: function(callback) {
         Post.findById(req.params.id).exec(callback);
@@ -103,6 +105,57 @@ exports.post_delete = function(req, res, next) {
     })
   })
 }
+
+exports.post_update = [
+  (req, res, next) => {
+    jwt.verify(req.token, 'secret', (err, authData) => {
+      if (err) {
+        res.sendStatus(403);
+      } else {
+        req.authData = authData;
+        next();
+      }
+    })
+  },
+
+  body('title', 'Title must be longer than 3 characters.').trim().isLength({ min: 3 }).escape(),
+  body('title', 'Title must be shorter than 100 characters.').trim().isLength({ max: 100 }).escape(),
+  body('content', 'Content must be longer than 3 characters.').trim().isLength({ min: 3 }).escape(),
+  body('public', 'Public must be a boolean.').trim().isBoolean(),
+
+  (req, res, next) => {
+      const errors = validationResult(req);
+
+      var post = new Post({
+        title: req.body.title,
+        content: req.body.content,
+        author: {
+          firstname: req.authData.firstname,
+          lastname: req.authData.lastname,
+          username: req.authData.username
+        },
+        comments: [],
+        timestamp: new Date(),
+        public: req.body.public,
+        _id: req.params.id
+      })
+
+      if (!errors.isEmpty()) {
+        res.json({
+          errors: errors.array()
+        })
+        return;
+      } else {
+        Post.findByIdAndUpdate(req.params.id, post, { new: true }, function(err, newPost) {
+          if (err) return next(err);
+          res.json({
+            message: "Post succesfully updated!",
+            post: newPost,
+          })
+        })
+      }
+  }
+]
 
 exports.comment_list = function(req, res, next) {
   async.parallel({
