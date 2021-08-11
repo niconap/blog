@@ -17,9 +17,11 @@ router.put('/posts/:id', verifyToken, postController.post_update);
 
 router.get('/authors', authorController.author_list);
 router.post('/authors', authorController.author_create);
+// TO DO: author update and delete methods
 
 router.get('/posts/:id/comments', postController.comment_list);
 router.post('/posts/:id/comments', postController.comment_create);
+// TO DO: comment delete method
 
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers['authorization'];
