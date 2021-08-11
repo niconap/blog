@@ -4,7 +4,11 @@ const { DateTime } = require('luxon');
 
 var PostSchema = new Schema({
   title: { type: String, minLength: 3, maxLength: 100, required: true },
-  author: { type: Schema.Types.ObjectId, ref: 'Author' },
+  author: { 
+    firstname: { type: String, minLength: 3, maxLength: 100, required: true },
+    lastname: { type: String, minLength: 3, maxLength: 100, required: true },
+    username: { type: String, minLength: 3, maxLength: 100, required: true },
+  },
   content: { type: String, minLength: 3, required: true },
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
   timestamp: { type: Date, required: true },

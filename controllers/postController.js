@@ -2,12 +2,13 @@ const Post = require('../models/post');
 const Comment = require('../models/comment');
 const Author = require('../models/author');
 const async = require('async');
+const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 
 exports.post_list = function(req, res, next) {
   async.parallel({
     posts: function(callback) {
-      Post.find({}).populate('author').populate('comments').exec(callback);
+      Post.find({}).populate('comments').exec(callback);
     }
   }, function(err, results) {
     if (err) return next(err);
@@ -22,7 +23,15 @@ exports.post_list = function(req, res, next) {
 
 exports.post_create = [
   (req, res, next) => {
-    next();
+    jwt.verify(req.token, 'secret', (err, authData) => {
+      if (err) {
+        console.log(err, req.token);
+        res.sendStatus(403);
+      } else {
+        req.authData = authData;
+        next();
+      }
+    })
   },
 
   body('title', 'Title must be longer than 3 characters.').trim().isLength({ min: 3 }).escape(),
@@ -31,32 +40,69 @@ exports.post_create = [
   body('public', 'Public must be a boolean.').trim().isBoolean(),
 
   (req, res, next) => {
-    const errors = validationResult(req);
+      const errors = validationResult(req);
 
-    var post = new Post({
-      title: req.body.title,
-      content: req.body.content,
-      comments: [],
-      timestamp: new Date(),
-      public: req.body.public,
-    })
-
-    if (!errors.isEmpty()) {
-      res.json({
-        errors: errors.array(),
+      var post = new Post({
+        title: req.body.title,
+        content: req.body.content,
+        author: {
+          firstname: req.authData.firstname,
+          lastname: req.authData.lastname,
+          username: req.authData.username
+        },
+        comments: [],
+        timestamp: new Date(),
+        public: req.body.public,
       })
-      return;
-    } else {
-      post.save(function(err) {
-        if (err) return next(err);
+
+      if (!errors.isEmpty()) {
         res.json({
-          message: 'Post succesfully added!',
-          post
+          errors: errors.array()
         })
-      })
-    }
+        return;
+      } else {
+        post.save(function(err) {
+          if (err) return next(err);
+          res.json({
+            message: 'Post succesfully added!',
+            post
+          })
+        })
+      }
   }
 ]
+
+exports.post_delete = function(req, res, next) {
+  jwt.verify(req.token, 'secret', (err, authData) => {
+    async.parallel({
+      post: function(callback) {
+        Post.findById(req.params.id).exec(callback);
+      }
+    },
+    function(err, results) {
+      if (err) return next(err);
+      if (results.post == null) {
+        res.json({
+          error: 404,
+          message: "No posts found."
+        })
+      } else if (results.post.author.username == authData.username) {
+        Post.findByIdAndRemove(results.post._id, function(err) {
+          if (err) return next(err);
+          res.json({
+            message: "Post successfully deleted!",
+            post: results.post
+          })
+        })
+      } else {
+        res.json({
+          error: 403,
+          message: "You do not have permission to delete this post."
+        });
+      }
+    })
+  })
+}
 
 exports.comment_list = function(req, res, next) {
   async.parallel({
@@ -80,38 +126,36 @@ exports.comment_list = function(req, res, next) {
 }
 
 exports.comment_create = [
-  exports.post_create = [
-    (req, res, next) => {
-      next();
-    },
+  (req, res, next) => {
+    next();
+  },
   
-    body('name', 'Name must be longer than 3 characters.').trim().isLength({ min: 3 }).escape(),
-    body('name', 'Name must be shorter than 100 characters.').trim().isLength({ max: 100 }).escape(),
-    body('content', 'Content must be longer than 3 characters.').trim().isLength({ min: 3 }).escape(),
+  body('name', 'Name must be longer than 3 characters.').trim().isLength({ min: 3 }).escape(),
+  body('name', 'Name must be shorter than 100 characters.').trim().isLength({ max: 100 }).escape(),
+  body('content', 'Content must be longer than 3 characters.').trim().isLength({ min: 3 }).escape(),
   
-    (req, res, next) => {
-      const errors = validationResult(req);
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    var comment = new Comment({
+      name: req.body.name,
+      content: req.body.content,
+      timestamp: new Date(),
+    })
   
-      var comment = new Comment({
-        name: req.body.name,
-        content: req.body.content,
-        timestamp: new Date(),
+    if (!errors.isEmpty()) {
+      res.json({
+        errors: errors.array(),
       })
-  
-      if (!errors.isEmpty()) {
-        res.json({
-          errors: errors.array(),
-        })
-        return;
-      } else {
-        comment.save(function(err) {
+      return;
+    } else {
+      comment.save(function(err) {
+        if (err) return next(err);
+        Post.findOneAndUpdate({ _id: req.params.id }, { $push: { comments: comment } }, function(err) {
           if (err) return next(err);
-          Post.findOneAndUpdate({ _id: req.params.id }, { $push: { comments: comment } }, function(err) {
-            if (err) return next(err);
-            res.json({ message: "Comment posted succesfully!" });
-          })
+          res.json({ message: "Comment posted succesfully!" });
         })
-      }
+      })
     }
-  ]
+  }
 ]

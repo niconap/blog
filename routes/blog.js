@@ -11,12 +11,24 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/posts', postController.post_list);
-router.post('/posts', postController.post_create);
+router.post('/posts', verifyToken, postController.post_create);
+router.delete('/posts/:id', verifyToken, postController.post_delete);
 
 router.get('/authors', authorController.author_list);
 router.post('/authors', authorController.author_create);
 
 router.get('/posts/:id/comments', postController.comment_list);
 router.post('/posts/:id/comments', postController.comment_create);
+
+function verifyToken(req, res, next) {
+  const bearerHeader = req.headers['authorization'];
+  if (typeof bearerHeader !== 'undefined') {
+    const bearer = bearerHeader.split(' ')[1];
+    req.token = bearer;
+    next();
+  } else {
+    res.sendStatus(403);
+  }
+}
 
 module.exports = router;
