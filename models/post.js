@@ -8,6 +8,7 @@ var PostSchema = new Schema({
     firstname: { type: String, minLength: 3, maxLength: 100, required: true },
     lastname: { type: String, minLength: 3, maxLength: 100, required: true },
     username: { type: String, minLength: 3, maxLength: 100, required: true },
+    id: { type: Schema.Types.ObjectId, ref: 'Author' }
   },
   content: { type: String, minLength: 3, required: true },
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
