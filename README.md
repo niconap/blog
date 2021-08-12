@@ -24,10 +24,10 @@ Using `/blog/posts/` will allow you to create a post. You'll need to provide a t
 {
   "title": "Sample title",
   "content": "Sample content",
-  "public": false // true means that the post is public, false means that it's not
+  "public": false
 }
 ```
-The API will automatically add an author to the post. You need to be logged in to be able to create posts.
+The API will automatically add an author to the post. You need to be logged in to be able to create posts. Setting public to false means that the post is private, setting it to true means that it's public.
 
 Using `/blog/posts/:id/comments` will allow you to post a comment under a post with the corresponding id. You'll need to provide a name and some content. For example:
 ```json
