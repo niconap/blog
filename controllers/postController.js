@@ -72,7 +72,8 @@ exports.post_create = [
         author: {
           firstname: req.authData.firstname,
           lastname: req.authData.lastname,
-          username: req.authData.username
+          username: req.authData.username,
+          id: req.authData._id
         },
         comments: [],
         timestamp: new Date(),
@@ -100,7 +101,10 @@ exports.post_create = [
 exports.post_delete = function(req, res, next) {
   jwt.verify(req.token, 'secret', (err, authData) => {
     if (err) {
-      res.sendStatus(403);
+      res.json({
+        error: 403,
+        message: "You do not have permission to delete a post."
+      });
     }
     async.parallel({
       post: function(callback) {
@@ -151,36 +155,43 @@ exports.post_update = [
   body('public', 'Public must be a boolean.').trim().isBoolean(),
 
   (req, res, next) => {
-      const errors = validationResult(req);
+      async.parallel({
+        post: function(callback) {
+          Post.findById(req.params.id).exec(callback);
+        }
+      }, function(err, results) {
+        if (err) return next(err);
+        const errors = validationResult(req);
 
-      var post = new Post({
-        title: req.body.title,
-        content: req.body.content,
-        author: {
-          firstname: req.authData.firstname,
-          lastname: req.authData.lastname,
-          username: req.authData.username
-        },
-        comments: [],
-        timestamp: new Date(),
-        public: req.body.public,
-        _id: req.params.id
-      })
-
-      if (!errors.isEmpty()) {
-        res.json({
-          errors: errors.array()
+        var post = new Post({
+          title: req.body.title,
+          content: req.body.content,
+          author: {
+            firstname: req.authData.firstname,
+            lastname: req.authData.lastname,
+            username: req.authData.username
+          },
+          comments: [results.post.comments],
+          timestamp: new Date(),
+          public: req.body.public,
+          _id: req.params.id
         })
-        return;
-      } else {
-        Post.findByIdAndUpdate(req.params.id, post, { new: true }, function(err, newPost) {
-          if (err) return next(err);
+
+        if (!errors.isEmpty()) {
           res.json({
-            message: "Post succesfully updated!",
-            post: newPost,
+            errors: errors.array()
           })
-        })
-      }
+          return;
+        } else {
+          Post.findByIdAndUpdate(req.params.id, post, { new: true }, function(err, newPost) {
+            if (err) return next(err);
+            res.json({
+              message: "Post succesfully updated!",
+              post: newPost,
+            })
+          })
+        }
+      })
   }
 ]
 
