@@ -11,13 +11,15 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/posts', postController.post_list);
+router.get('/posts/:id', postController.post_detail);
 router.post('/posts', verifyToken, postController.post_create);
 router.delete('/posts/:id', verifyToken, postController.post_delete);
 router.put('/posts/:id', verifyToken, postController.post_update);
 
 router.get('/authors', authorController.author_list);
 router.post('/authors', authorController.author_create);
-// TO DO: author update and delete methods
+router.delete('/authors/:id', verifyToken, authorController.author_delete);
+router.put('/authors/:id', verifyToken, authorController.author_update);
 
 router.get('/posts/:id/comments', postController.comment_list);
 router.post('/posts/:id/comments', postController.comment_create);
