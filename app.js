@@ -51,7 +51,6 @@ function(jwtPayload, callback) {
 var indexRouter = require('./routes/index');
 var blogRouter = require('./routes/blog');
 var authRouter = require('./routes/auth');
-var userRouter = require('./routes/user');
 
 var app = express();
 
@@ -76,7 +75,6 @@ app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/blog', blogRouter);
 app.use('/auth', authRouter);
-app.use('/user', passport.authenticate('jwt', {session: false}), userRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
