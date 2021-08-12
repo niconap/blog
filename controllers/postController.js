@@ -22,12 +22,35 @@ exports.post_list = function(req, res, next) {
   })
 }
 
+exports.post_detail = function(req, res, next) {
+  async.parallel({
+    post: function(callback) {
+      Post.findById(req.params.id).populate('author').populate('comments').exec(callback);
+    }
+  }, 
+  function(err, results) {
+    if (err) return next(err);
+    if (results.post == null) {
+      res.json({
+        error: 404,
+        message: "Post not found."
+      })
+    }
+    res.json({
+      post: results.post
+    })
+  })
+}
+
 // Create a new post
 exports.post_create = [
   (req, res, next) => {
     jwt.verify(req.token, 'secret', (err, authData) => {
       if (err) {
-        res.sendStatus(403);
+        res.json({
+          error: 403,
+          message: "You do not have permission to create a new post."
+        })
       } else {
         req.authData = authData;
         next();
