@@ -259,3 +259,43 @@ exports.comment_create = [
     }
   }
 ]
+
+exports.comment_delete = function(req, res, next) {
+  async.parallel({
+    post: function(callback) {
+      Post.findById(req.params.postid).exec(callback);
+    },
+    comment: function(callback) {
+      Comment.findById(req.params.commentid).exec(callback);
+    }
+  },
+  function(err, results) {
+    if (err) return next(err);
+    jwt.verify(req.token, 'secret', function(err, authData) {
+      if (err) {
+        res.json({
+          error: 403,
+          message: "You do not have permission to delete comments."
+        });
+        return;
+      }
+      if (results.post.author.username == authData.username) {
+        Comment.findByIdAndRemove(req.params.commentid, function(err, comment) {
+          if (err) return next(err);
+          Post.findOneAndUpdate({ id: req.params.postid }, { $pull: { comments: req.params.commentid } }, function(err, post) {
+            res.json({
+              message: "Comment succesfully removed!",
+              comment,
+              post
+            })
+          })
+        })
+      } else {
+        res.json({
+          error: 403,
+          message: "You do not have permission to delete this comment."
+        })
+      }
+    })
+  })
+}

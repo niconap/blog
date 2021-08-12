@@ -172,6 +172,7 @@ exports.author_update = [
           error: 403,
           message: "You do not have permission to update this author."
         })
+        return;
       }
       const errors = validationResult(req);
       if (results.author == null) {
