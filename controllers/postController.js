@@ -161,6 +161,13 @@ exports.post_update = [
         }
       }, function(err, results) {
         if (err) return next(err);
+        if (results.post == null) {
+          res.json({
+            error: 404,
+            message: "Post not found."
+          })
+          return;
+        }
         const errors = validationResult(req);
 
         var post = new Post({
