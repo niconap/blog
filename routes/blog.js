@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const jwt = require('jsonwebtoken');
 
 const authorController = require('../controllers/authorController');
 const postController = require('../controllers/postController');
@@ -24,6 +25,21 @@ router.put('/authors/:id', verifyToken, authorController.author_update);
 router.get('/posts/:id/comments', postController.comment_list);
 router.post('/posts/:id/comments', postController.comment_create);
 router.delete('/posts/:postid/comments/:commentid', verifyToken, postController.comment_delete);
+
+router.get('/currentuser', verifyToken, function(req, res, next) {
+  jwt.verify(req.token, 'secret', (err, authData) => {
+    if (err) {
+      res.json({
+        error: 403,
+        message: 'You are not logged in or you do not have permission to access this information.'
+      })
+      return;
+    }
+    res.json({
+      authData
+    })
+  })
+})
 
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers['authorization'];
