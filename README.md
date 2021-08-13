@@ -19,7 +19,7 @@ Using `/blog/posts/:id/comments` will give you a list of all the comments under 
 Using `/blog/authors/` will give you a list of all the authors.
 
 ### POST requests
-Using `/blog/posts/` will allow you to create a post. You'll need to provide a title, some content and if you want the post to be public or not. For example:
+Using `/blog/posts/` will allow you to create a post. You'll need to provide a title, some content and whether or not you want the post to be public. For example:
 ```json
 {
   "title": "Sample title",
