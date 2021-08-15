@@ -1,6 +1,6 @@
 # Blog API (backend) 
 
-This is an API I created for the blog-api project from the The Odin Project curriculum. This API allows a user to create, read, update and delete posts and authors and it allows visitors to create comments under certain posts (which the author of that post can delete). Comments can not be updated. 
+This is an API I created for the blog-api project from the The Odin Project curriculum. The project is a sister project of my blog-frontend project, which you can find [here](https://www.github.com/niconap/blog-frontend). This API allows a user to create, read, update and delete posts and authors and it allows visitors to create comments under certain posts (which the author of that post can delete). Comments can not be updated. 
 
 ## How does it work?
 
