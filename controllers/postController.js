@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 
 // Get all of the posts in an array
-exports.post_list = function (req, res, next) {
+exports.post_list_public = function (req, res, next) {
   async.parallel(
     {
       posts: function (callback) {
@@ -23,6 +23,36 @@ exports.post_list = function (req, res, next) {
       res.json(results.posts);
     }
   );
+};
+
+exports.post_list_private = function (req, res, next) {
+  jwt.verify(req.token, 'secret', (err, authData) => {
+    if (err) {
+      res.json({
+        error: 403,
+        message: 'You do not have permission to view these posts.',
+      });
+      return;
+    }
+    async.parallel(
+      {
+        posts: function (callback) {
+          Post.find({ 'author.username': authData.username })
+            .populate('comments')
+            .exec(callback);
+        },
+      },
+      function (err, results) {
+        if (err) return next(err);
+        if (results.posts == null) {
+          var err = new Error('No posts found');
+          err.status = 404;
+          return next(err);
+        }
+        res.json(results.posts);
+      }
+    );
+  });
 };
 
 exports.post_detail = function (req, res, next) {
