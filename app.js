@@ -6,6 +6,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 var passport = require('passport');
+var compression = require('compression');
+var helmet = require('helmet');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 const Author = require('./models/author');
@@ -13,40 +15,49 @@ const passportJWT = require('passport-jwt');
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 
-passport.use(new LocalStrategy({
-  usernameField: 'username',
-  passwordfield: 'password',
-}, function(username, password, done) {
-  Author.findOne({ username: username }, (err, user) => {
-    if (err) {
-      return done(err);
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: 'username',
+      passwordfield: 'password',
+    },
+    function (username, password, done) {
+      Author.findOne({ username: username }, (err, user) => {
+        if (err) {
+          return done(err);
+        }
+        if (!user) {
+          return done(null, false, { message: 'Incorrect username' });
+        }
+        bcrypt.compare(password, user.password, (err, res) => {
+          if (res) {
+            return done(null, user);
+          } else {
+            return done(null, false, { message: 'Incorrect password' });
+          }
+        });
+      });
     }
-    if (!user) {
-      return done(null, false, { message: 'Incorrect username' });
-    }
-    bcrypt.compare(password, user.password, (err, res) => {
-      if (res) {
-        return done(null, user);
-      } else {
-        return done(null, false, { message: 'Incorrect password' });
-      }
-    });
-  });
-}));
+  )
+);
 
-passport.use(new JWTStrategy({
-  jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-  secretOrKey: 'secret'
-},
-function(jwtPayload, callback) {
-  return Author.findOneById(jwtPayload.id)
-            .then(user => {
-              return callback(null, user);
-            })
-            .catch(err => {
-              return callback(err);
-            });
-}))
+passport.use(
+  new JWTStrategy(
+    {
+      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+      secretOrKey: 'secret',
+    },
+    function (jwtPayload, callback) {
+      return Author.findOneById(jwtPayload.id)
+        .then((user) => {
+          return callback(null, user);
+        })
+        .catch((err) => {
+          return callback(err);
+        });
+    }
+  )
+);
 
 var indexRouter = require('./routes/index');
 var blogRouter = require('./routes/blog');
@@ -54,8 +65,11 @@ var authRouter = require('./routes/auth');
 
 var app = express();
 
-var dev_db_url = process.env.MONGODB_URI;
-var mongoDB = dev_db_url;
+app.use(compression());
+app.use(helmet());
+
+var dev_db_url = process.env.MONGODBURI;
+var mongoDB = process.env.MONGODB_URI || dev_db_url;
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -77,19 +91,19 @@ app.use('/blog', blogRouter);
 app.use('/auth', authRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
   res.status(err.status || 500);
-  res.json({error: err, message: err.message });
+  res.json({ error: err, message: err.message });
 });
 
 module.exports = app;
