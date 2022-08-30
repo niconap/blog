@@ -61,7 +61,6 @@ exports.post_detail = function (req, res, next) {
       post: function (callback) {
         Post.findById(req.params.id)
           .populate('author')
-          .select({ public: true })
           .populate('comments')
           .exec(callback);
       },
@@ -73,6 +72,14 @@ exports.post_detail = function (req, res, next) {
           error: 404,
           message: 'Post not found.',
         });
+        return;
+      }
+      if (!results.post.public) {
+        res.json({
+          error: 403,
+          message: 'This post is private',
+        });
+        return;
       }
       res.json({
         post: results.post,
