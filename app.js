@@ -95,10 +95,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static(path.join(__dirname, 'authorfrontend')));
 app.use(express.static(path.join(__dirname, 'userfrontend')));
 
 app.use('/blog', blogRouter);
 app.use('/auth', authRouter);
+app.use('/author-frontend', (req, res) => {
+  res.sendFile(path.join(__dirname, 'authorfrontend', 'index.html'));
+});
 app.use('/blog-frontend', (req, res) => {
   res.sendFile(path.join(__dirname, 'userfrontend', 'index.html'));
 });
