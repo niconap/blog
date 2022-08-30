@@ -60,15 +60,14 @@ passport.use(
   )
 );
 
-var indexRouter = require('./routes/index');
 var blogRouter = require('./routes/blog');
 var authRouter = require('./routes/auth');
 
 var app = express();
 app.use(cors());
 
-app.use(compression());
-app.use(helmet());
+// app.use(compression());
+// app.use(helmet());
 
 var dev_db_url = process.env.MONGODBURI;
 var mongoDB = process.env.MONGODB_URI || dev_db_url;
@@ -96,10 +95,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static(path.join(__dirname, 'userfrontend')));
 
-app.use('/', indexRouter);
 app.use('/blog', blogRouter);
 app.use('/auth', authRouter);
+app.use('/blog-frontend', (req, res) => {
+  res.sendFile(path.join(__dirname, 'userfrontend', 'index.html'));
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
