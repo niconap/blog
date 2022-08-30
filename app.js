@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var compression = require('compression');
 var helmet = require('helmet');
+var cors = require('cors');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 const Author = require('./models/author');
@@ -64,6 +65,7 @@ var blogRouter = require('./routes/blog');
 var authRouter = require('./routes/auth');
 
 var app = express();
+app.use(cors());
 
 app.use(compression());
 app.use(helmet());
