@@ -51,3 +51,9 @@ Editing comments is not possible, since comments are not associated to an accoun
 
 ## Live version
 The live version can be found here: [blog](https://blogapi-niconap.herokuapp.com/blog-frontend) and [author interface](https://blogapi-niconap.herokuapp.com/author-frontend).
+
+## To-do
+This project isn't finished yet. I still have to implement the following things into the frontend:
+- Creating new authors
+- Deleting authors
+- Editing blogposts
