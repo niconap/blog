@@ -48,3 +48,6 @@ Using `/blog/posts/:postid/comments/:commentid` will allow you to delete a comme
 Using `/posts/:id/` will allow you to update a post with the corresponding id. You need to be logged in to perform this action AND the post has to be written by you on your account. You need to provide the data in the same way as in the POST request.
 
 Editing comments is not possible, since comments are not associated to an account.
+
+## Live version
+The live version can be found here: [blog](https://blogapi-niconap.herokuapp.com/blog-frontend)
