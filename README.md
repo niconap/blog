@@ -50,4 +50,4 @@ Using `/posts/:id/` will allow you to update a post with the corresponding id. Y
 Editing comments is not possible, since comments are not associated to an account.
 
 ## Live version
-The live version can be found here: [blog](https://blogapi-niconap.herokuapp.com/blog-frontend)
+The live version can be found here: [blog](https://blogapi-niconap.herokuapp.com/blog-frontend) and [author interface](https://blogapi-niconap.herokuapp.com/author-frontend).
