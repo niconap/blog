@@ -37,6 +37,16 @@ Using `/blog/posts/:id/comments` will allow you to post a comment under a post w
 }
 ```
 
+It is also possible to create an author. Creating an author is done using `/authors/`. In order to create an author you need to submit the necessary information in the following format in the body of your HTTP-request:
+```json
+{
+  "firstname": "Sample name",
+  "lastname": "Sample name",
+  "username": "Sample username",
+  "password": "Sample password"
+}
+```
+
 ### DELETE requests
 Using `/blog/posts/:id` will allow you to delete a post with the corresponding id. You need to be logged in to perform this action AND the post has to be written by you on your account. 
 
