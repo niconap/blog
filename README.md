@@ -1,25 +1,31 @@
-# Blog API (backend) 
+# Blog API 
 
-This is an API I created for the blog-api project from the The Odin Project curriculum. The project is a sister project of my blog-frontend project, which you can find [here](https://www.github.com/niconap/blog-frontend). This API allows a user to create, read, update and delete posts and authors and it allows visitors to create comments under certain posts (which the author of that post can delete). Comments can not be updated. 
+This is an API I created for the blog-api project from the The Odin Project curriculum. This API allows a user to create, read, update and delete posts and authors and it allows visitors to create comments under certain posts (which the author of that post can delete). Comments can not be updated. This API also includes two frontends that can be found at `/author-frontend/` and `/blog-frontend/` respectively. The author frontend allows users to create, edit, privatize or publicize and delete posts. The blog frontend allows users to read public posts and comment on them. 
 
 ## How does it work?
 
 All the POST and PUT data has to be provided in the body of the HTTP request in JSON format.
 
 ### Logging in
-You can log into your account using `/auth/login` (POST request), all you need to provide is a username and a password. 
+Logging in is possible by using `/auth/login` (POST request), all information that needs to provided is a username and a password. For example:
+```json
+{
+  "username": "username",
+  "password": "password"
+}
+```
 
 ### GET requests
-Using `/blog/posts/` will give you a list of all the posts on the blog. 
+Using `/blog/posts/` will give a list of all the posts on the blog. 
 
-Using `/blog/posts/:id` will give you the post with the corresponding id. 
+Using `/blog/posts/:id` will give the post with the corresponding id. 
 
-Using `/blog/posts/:id/comments` will give you a list of all the comments under the post with the corresponding id. 
+Using `/blog/posts/:id/comments` will give a list of all the comments under the post with the corresponding id. 
 
-Using `/blog/authors/` will give you a list of all the authors.
+Using `/blog/authors/` will give a list of all the authors.
 
 ### POST requests
-Using `/blog/posts/` will allow you to create a post. You'll need to provide a title, some content and whether or not you want the post to be public. For example:
+Using `/blog/posts/` will create a post. Information about the title, the content and whether or not the post is public should be provided. For example:
 ```json
 {
   "title": "Sample title",
@@ -27,9 +33,9 @@ Using `/blog/posts/` will allow you to create a post. You'll need to provide a t
   "public": false
 }
 ```
-The API will automatically add an author to the post. You need to be logged in to be able to create posts. Setting public to false means that the post is private, setting it to true means that it's public.
+The API will automatically add an author to the post. It is required to be logged in to be able to create posts. Setting public to false means that the post is private, setting it to true means that it's public.
 
-Using `/blog/posts/:id/comments` will allow you to post a comment under a post with the corresponding id. You'll need to provide a name and some content. For example:
+Using `/blog/posts/:id/comments` will post a comment under a post with the corresponding id. A name and content have to be added in the request. For example:
 ```json
 {
   "name": "Sample name",
@@ -37,7 +43,7 @@ Using `/blog/posts/:id/comments` will allow you to post a comment under a post w
 }
 ```
 
-It is also possible to create an author. Creating an author is done using `/authors/`. In order to create an author you need to submit the necessary information in the following format in the body of your HTTP-request:
+It is also possible to create an author. Creating an author is done using `/authors/`. In order to create an author information must be submitted in like this:
 ```json
 {
   "firstname": "Sample name",
@@ -48,22 +54,18 @@ It is also possible to create an author. Creating an author is done using `/auth
 ```
 
 ### DELETE requests
-Using `/blog/posts/:id` will allow you to delete a post with the corresponding id. You need to be logged in to perform this action AND the post has to be written by you on your account. 
+No additional information in the body of the HTTP-request is required for delete requests.
 
-Using `/blog/authors/:id` will allow you to delete an author/account with the corresponding id. You need to be logged in to perform this action AND the author/account has to be yours.
+Using `/blog/posts/:id` will delete a post with the corresponding id. It is required to be logged in to perform this action AND the post has to be written by the account that is currently logged in. 
 
-Using `/blog/posts/:postid/comments/:commentid` will allow you to delete a comment with the corresponding commentid under a post with the corresponding postid. You need to be logged in to perform this action AND the comment has to be under one of your posts.
+Using `/blog/authors/:id` will to delete an author/account with the corresponding id. It is required to be logged in to perform this action AND the author/account has to be the account that is currently logged in.
+
+Using `/blog/posts/:postid/comments/:commentid` will to delete a comment with the corresponding commentid under a post with the corresponding postid. It is required to be logged in to perform this action AND the comment has to be under a post that the account that is currently logged in has written.
 
 ### PUT requests
-Using `/posts/:id/` will allow you to update a post with the corresponding id. You need to be logged in to perform this action AND the post has to be written by you on your account. You need to provide the data in the same way as in the POST request.
+Using `/posts/:id/` will update a post with the corresponding id. It is required to be logged in to perform this action AND the post has to be written by the current account. Data needs to be provided in the same format as in the POST request to create a post.
 
 Editing comments is not possible, since comments are not associated to an account.
 
 ## Live version
-The live version can be found here: [blog](https://blogapi-niconap.herokuapp.com/blog-frontend) and [author interface](https://blogapi-niconap.herokuapp.com/author-frontend).
-
-## To-do
-This project isn't finished yet. I still have to implement the following things into the frontend:
-- Creating new authors
-- Deleting authors
-- Editing blogposts
+The live version can be found here: [blog interface](https://blogapi-niconap.herokuapp.com/blog-frontend) and [author interface](https://blogapi-niconap.herokuapp.com/author-frontend).
