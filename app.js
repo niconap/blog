@@ -66,9 +66,6 @@ var authRouter = require('./routes/auth');
 var app = express();
 app.use(cors());
 
-// app.use(compression());
-// app.use(helmet());
-
 var dev_db_url = process.env.MONGODBURI;
 var mongoDB = process.env.MONGODB_URI || dev_db_url;
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
