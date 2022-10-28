@@ -20,6 +20,7 @@ exports.post_list_public = function (req, res, next) {
         err.status = 404;
         return next(err);
       }
+      results.posts.reverse();
       res.json(results.posts);
     }
   );
@@ -49,6 +50,7 @@ exports.post_list_private = function (req, res, next) {
           err.status = 404;
           return next(err);
         }
+        results.posts.reverse();
         res.json(results.posts);
       }
     );
