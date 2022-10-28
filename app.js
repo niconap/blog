@@ -9,6 +9,7 @@ var passport = require('passport');
 var compression = require('compression');
 var helmet = require('helmet');
 var cors = require('cors');
+var session = require('express-session');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 const Author = require('./models/author');
@@ -64,7 +65,16 @@ var blogRouter = require('./routes/blog');
 var authRouter = require('./routes/auth');
 
 var app = express();
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: true,
+    resave: false,
+  })
+);
 app.use(cors());
+app.use(compression());
+app.use(helmet());
 
 var dev_db_url = process.env.MONGODBURI;
 var mongoDB = process.env.MONGODB_URI || dev_db_url;
