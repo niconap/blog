@@ -2,6 +2,8 @@
 
 This is an API I created for the blog-api project from the The Odin Project curriculum. This API allows a user to create, read, update and delete posts and authors and it allows visitors to create comments under certain posts (which the author of that post can delete). Comments can not be updated. This API also includes two frontends that can be found at `/author-frontend/` and `/blog-frontend/` respectively. The author frontend allows users to create, edit, privatize or publicize and delete posts. The blog frontend allows users to read public posts and comment on them. 
 
+The repository of the author interface can be found [here](https://github.com/niconap/blog-author-interface) and the repository of the reader interface can be found [here](https://github.com/niconap/blog-frontend).
+
 ## How does it work?
 
 All the POST and PUT data has to be provided in the body of the HTTP request in JSON format.
@@ -68,4 +70,4 @@ Using `/posts/:id/` will update a post with the corresponding id. It is required
 Editing comments is not possible, since comments are not associated to an account.
 
 ## Live version
-The live version can be found here: [blog interface](https://blogapi-niconap.herokuapp.com/blog-frontend) and [author interface](https://blogapi-niconap.herokuapp.com/author-frontend).
+The live version can be found here: [reader interface](https://blogapi-niconap.herokuapp.com/blog-frontend) and [author interface](https://blogapi-niconap.herokuapp.com/author-frontend).
