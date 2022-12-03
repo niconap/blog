@@ -4,6 +4,9 @@ This is an API I created for the blog-api project from the The Odin Project curr
 
 The repository of the author interface can be found [here](https://github.com/niconap/blog-author-interface) and the repository of the reader interface can be found [here](https://github.com/niconap/blog-frontend).
 
+## Live version
+The live version can be found here: [reader interface](https://blog-9s8m.onrender.com/blog-frontend) and [author interface](https://blog-9s8m.onrender.com/author-frontend).
+
 ## How does it work?
 
 All the POST and PUT data has to be provided in the body of the HTTP request in JSON format.
@@ -68,6 +71,3 @@ Using `/blog/posts/:postid/comments/:commentid` will to delete a comment with th
 Using `/posts/:id/` will update a post with the corresponding id. It is required to be logged in to perform this action AND the post has to be written by the current account. Data needs to be provided in the same format as in the POST request to create a post.
 
 Editing comments is not possible, since comments are not associated to an account.
-
-## Live version
-The live version can be found here: [reader interface](https://blogapi-niconap.herokuapp.com/blog-frontend) and [author interface](https://blogapi-niconap.herokuapp.com/author-frontend).
