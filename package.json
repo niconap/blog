@@ -21,7 +21,6 @@
     "express-validator": "^6.12.1",
     "helmet": "^4.6.0",
     "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
     "jsonwebtoken": "^9.0.0",
     "luxon": "^2.5.2",
     "mongoose": "^5.13.15",
